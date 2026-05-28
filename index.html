@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>乔亭AI作图工具 - AI作图工具站</title>
+    <link rel="preconnect" href="https://images.unsplash.com">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#amazon-suite" aria-label="乔亭AI作图工具首页">
+        <span class="brand-mark">QT</span>
+        <span>乔亭AI作图工具</span>
+      </a>
+      <nav class="main-nav" aria-label="主导航">
+        <a href="#amazon-suite">亚马逊9张图</a>
+        <a class="is-hidden" href="#amazon-aplus">亚马逊A+图</a>
+        <a href="#studio">AI作图</a>
+        <a href="#tools">工具广场</a>
+        <a href="#workflow">使用流程</a>
+        <a class="is-hidden" href="#cases">案例</a>
+        <a href="#pricing">套餐</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="header-actions">
+        <button class="ghost-button" type="button">登录</button>
+        <button class="primary-button compact" type="button">注册</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="amazon-suite" class="section-wrap amazon-suite">
+        <div class="section-heading suite-heading">
+          <p class="eyebrow">AMAZON IMAGE SET</p>
+          <h2>快速生成亚马逊9张图</h2>
+          <p>输入产品名称和核心卖点，一键生成主图、功能图、尺寸图、场景图、细节图、包装图和对比图的套图方案。</p>
+        </div>
+        <div class="suite-layout">
+          <aside class="suite-form">
+            <label class="field-label" for="amazonProduct">产品名称</label>
+            <input id="amazonProduct" type="text" placeholder="例如：无线筋膜枪 / 宠物饮水机 / 露营灯">
+
+            <label class="field-label" for="amazonPoints">核心卖点</label>
+            <textarea id="amazonPoints" rows="4" placeholder="例如：轻量便携、长续航、低噪音、防水、适合户外"></textarea>
+
+            <div class="field-row">
+              <span class="field-label">图片比例</span>
+              <div class="segmented" role="group" aria-label="亚马逊主图比例">
+                <button class="active" type="button" data-amazon-ratio="1:1">1:1</button>
+                <button type="button" data-amazon-ratio="4:3">4:3</button>
+                <button type="button" data-amazon-ratio="16:9">16:9</button>
+              </div>
+            </div>
+
+            <label class="upload-box suite-upload" for="amazonReference">
+              <input id="amazonReference" type="file" accept="image/*">
+              <span class="upload-icon">+</span>
+              <span>上传产品图</span>
+              <small>用于后续真实 AI 接口参考</small>
+            </label>
+
+            <button id="generateAmazonSet" class="primary-button wide" type="button" onclick="handleAmazonMainGenerate()">生成白底主图</button>
+            <p id="amazonStatus" class="suite-status">等待输入产品信息</p>
+
+            <div class="usage-card">
+              <h3>使用方法</h3>
+              <ol>
+                <li>填写产品名称和核心卖点。</li>
+                <li>选择需要的图片比例。</li>
+                <li>上传产品图作为参考。</li>
+                <li>点击右侧对应卡片的“生成这张图”。</li>
+                <li>确认效果后下载或继续生成其他类型。</li>
+              </ol>
+            </div>
+          </aside>
+
+          <div class="suite-grid" aria-label="亚马逊9张图预览">
+            <article class="suite-card" data-suite-card data-image-type="白底主图">
+              <span>01</span>
+              <h3>白底主图</h3>
+              <p>纯白背景，主体居中，突出产品完整外观。</p>
+              <img class="suite-product-image" src="assets/amazon-main-product.png" alt="亚马逊白底主图产品示例">
+              <button class="mini-generate" type="button" data-generate-image="白底主图">生成这张图</button>
+            </article>
+            <article class="suite-card" data-suite-card data-image-type="尺寸参数图">
+              <span>02</span>
+              <h3>尺寸参数图</h3>
+              <p>标注尺寸、容量、重量和关键规格。</p>
+              <img class="suite-product-image" src="assets/amazon-size-parameters.png" alt="亚马逊尺寸参数图示例">
+              <button class="mini-generate" type="button" data-generate-image="尺寸参数图">生成这张图</button>
+            </article>
+            <article class="suite-card" data-suite-card data-image-type="核心卖点图">
+              <span>03</span>
+              <h3>核心卖点图</h3>
+              <p>用图标和短文案展示产品最大优势。</p>
+              <img class="suite-product-image" src="assets/amazon-selling-points.png" alt="亚马逊核心卖点图示例">
+              <button class="mini-generate" type="button" data-generate-image="核心卖点图">生成这张图</button>
+            </article>
+            <article class="suite-card" data-suite-card data-image-type="使用场景图">
+              <span>04</span>
+              <h3>使用场景图</h3>
+              <p>展示用户在真实生活场景中的使用方式。</p>
+              <img class="suite-product-image" src="assets/amazon-use-scene.png" alt="亚马逊使用场景图示例">
+              <button class="mini-generate" type="button" data-generate-image="使用场景图">生成这张图</button>
+            </article>
+            <article class="suite-card" data-suite-card data-image-type="细节特写图">
+              <span>05</span>
+              <h3>细节特写图</h3>
+              <p>放大材质、结构、接口、纹理等细节。</p>
+              <img class="suite-product-image" src="assets/amazon-detail-closeup.png" alt="亚马逊细节特写图示例">
+              <button class="mini-generate" type="button" data-generate-image="细节特写图">生成这张图</button>
+            </article>
+            <article class="suite-card" data-suite-card data-image-type="包装清单图">
+              <span>06</span>
+              <h3>包装清单图</h3>
+              <p>展示包装、配件、说明书和整套内容。</p>
+              <img class="suite-product-image" src="assets/amazon-package-list.png" alt="亚马逊包装清单图示例">
+              <button class="mini-generate" type="button" data-generate-image="包装清单图">生成这张图</button>
+            </article>
+            <article class="suite-card" data-suite-card data-image-type="对比优势图">
+              <span>07</span>
+              <h3>对比优势图</h3>
+              <p>对比普通产品，强调升级点和购买理由。</p>
+              <img class="suite-product-image" src="assets/amazon-comparison.png" alt="亚马逊对比优势图示例">
+              <button class="mini-generate" type="button" data-generate-image="对比优势图">生成这张图</button>
+            </article>
+            <article class="suite-card bonus-card" data-image-type="礼物图">
+              <span>08</span>
+              <h3>礼物图</h3>
+              <p>展示节日送礼、包装质感和适合作为礼物的购买理由。</p>
+              <img class="suite-product-image" src="assets/amazon-gift-scene.png" alt="亚马逊礼物图示例">
+              <button class="mini-generate" type="button" data-generate-image="礼物图">生成这张图</button>
+            </article>
+            <article class="suite-card bonus-card" data-image-type="人物场景图">
+              <span>09</span>
+              <h3>人物场景图</h3>
+              <p>展示人物与产品互动的真实场景，增强代入感和信任感。</p>
+              <img class="suite-product-image" src="assets/amazon-scene-product.png" alt="亚马逊人物场景图示例">
+              <button class="mini-generate" type="button" data-generate-image="人物场景图">生成这张图</button>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="amazon-aplus" class="section-wrap amazon-suite is-hidden">
+        <div class="section-heading suite-heading">
+          <p class="eyebrow">AMAZON A+ CONTENT</p>
+          <h2>快速生成亚马逊7张A+图</h2>
+          <p>围绕品牌故事、功能卖点、使用场景和对比优势，快速生成适合亚马逊详情页 A+ 内容的7张模块图。</p>
+        </div>
+        <div class="suite-layout">
+          <aside class="suite-form">
+            <label class="field-label" for="aplusProduct">产品名称</label>
+            <input id="aplusProduct" type="text" placeholder="例如：厨房收纳架 / 车载吸尘器 / 美妆镜">
+
+            <label class="field-label" for="aplusBrand">品牌定位</label>
+            <textarea id="aplusBrand" rows="4" placeholder="例如：简约、高品质、适合家庭日常、强调耐用和空间美学"></textarea>
+
+            <label class="upload-box suite-upload" for="aplusReference">
+              <input id="aplusReference" type="file" accept="image/*">
+              <span class="upload-icon">+</span>
+              <span>上传品牌或产品素材</span>
+              <small>用于后续真实 AI 接口参考</small>
+            </label>
+
+            <button id="generateAplusSet" class="primary-button wide" type="button">生成亚马逊7张A+图</button>
+            <p id="aplusStatus" class="suite-status">等待输入产品信息</p>
+          </aside>
+
+          <div class="suite-grid aplus-grid" aria-label="亚马逊7张A+图预览">
+            <article class="suite-card aplus-card main" data-aplus-card>
+              <span>01</span>
+              <h3>品牌故事横幅</h3>
+              <p>展示品牌调性、产品系列和核心价值。</p>
+            </article>
+            <article class="suite-card aplus-card" data-aplus-card>
+              <span>02</span>
+              <h3>核心功能模块</h3>
+              <p>用大图和短文案解释产品最重要功能。</p>
+            </article>
+            <article class="suite-card aplus-card" data-aplus-card>
+              <span>03</span>
+              <h3>使用场景模块</h3>
+              <p>展示产品在家庭、办公或户外场景中的效果。</p>
+            </article>
+            <article class="suite-card aplus-card" data-aplus-card>
+              <span>04</span>
+              <h3>材质工艺模块</h3>
+              <p>突出材质、结构、工艺和品质细节。</p>
+            </article>
+            <article class="suite-card aplus-card" data-aplus-card>
+              <span>05</span>
+              <h3>安装使用说明</h3>
+              <p>用分步图说明安装、使用和维护方式。</p>
+            </article>
+            <article class="suite-card aplus-card" data-aplus-card>
+              <span>06</span>
+              <h3>系列对比模块</h3>
+              <p>对比同系列不同型号，帮助用户选择。</p>
+            </article>
+            <article class="suite-card aplus-card" data-aplus-card>
+              <span>07</span>
+              <h3>信任背书模块</h3>
+              <p>展示认证、售后、包装和品牌承诺。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="tools" class="section-wrap">
+        <div class="section-heading hero-style-heading">
+          <p class="eyebrow">TOOLS PLAZA</p>
+          <h2>工具广场</h2>
+          <p>覆盖商品图、人物图、修复和素材生产的常用场景。点击卡片可查看工具详情。</p>
+        </div>
+        <div class="tool-grid">
+          <button class="tool-card" type="button" data-tool="jewelry">
+            <img src="assets/jewelry-retouch-before-after.png" alt="珠宝精修前后对比">
+            <h3>珠宝精修</h3>
+            <p>提升金属高光与宝石通透感，适合电商详情页。</p>
+            <span>查看详情</span>
+          </button>
+          <button class="tool-card" type="button" data-tool="scene">
+            <img src="assets/product-scene-swap-before-after.png" alt="产品换场景前后对比">
+            <h3>产品换场景</h3>
+            <p>把白底商品放入广告级场景，快速出主图方案。</p>
+            <span>查看详情</span>
+          </button>
+          <button class="tool-card" type="button" data-tool="model">
+            <img src="assets/fashion-model-showcase.png" alt="服装模特穿搭展示">
+            <h3>服装模特图</h3>
+            <p>生成穿搭展示、姿势延展和不同背景风格。</p>
+            <span>查看详情</span>
+          </button>
+          <button class="tool-card" type="button" data-tool="poster">
+            <img src="assets/poster-background-christmas.png" alt="圣诞促销海报背景图">
+            <h3>海报背景</h3>
+            <p>为活动、节日、品牌专题快速生成视觉背景。</p>
+            <span>查看详情</span>
+          </button>
+          <button class="tool-card" type="button" data-tool="upscale">
+            <img src="assets/image-upscale-before-after.png" alt="无损高清放大前后对比">
+            <h3>无损高清放大</h3>
+            <p>修复低清素材，输出适合展示和印刷的高清图。</p>
+            <span>查看详情</span>
+          </button>
+          <button class="tool-card" type="button" data-tool="cutout">
+            <img src="assets/batch-cutout-products.png" alt="批量抠图商品示例">
+            <h3>批量抠图</h3>
+            <p>批量上传商品图，自动抠除背景并保留主体边缘。</p>
+            <span>查看详情</span>
+          </button>
+        </div>
+      </section>
+
+      <section id="studio" class="hero-shell">
+        <div class="hero-copy">
+          <p class="eyebrow">AI IMAGE STUDIO</p>
+          <h1>AI作图工厂：商品图、海报图、模特图一站生成</h1>
+          <p>上传产品图或输入一句话，快速生成适合电商主图、广告海报、社媒内容的高质量图片。</p>
+        </div>
+
+        <div class="studio">
+          <aside class="control-panel" aria-label="作图参数">
+            <label class="field-label" for="prompt">画面描述</label>
+            <textarea id="prompt" rows="5" placeholder="例如：一瓶蓝色香水放在水波纹玻璃台面上，晨光，商业摄影，高级感"></textarea>
+
+            <div class="field-row">
+              <span class="field-label">风格</span>
+              <div class="style-buttons" role="group" aria-label="图片风格">
+                <button class="active" type="button" data-style="商业摄影">商业摄影</button>
+                <button type="button" data-style="国潮插画">国潮插画</button>
+                <button type="button" data-style="电影海报">电影海报</button>
+                <button type="button" data-style="3D质感">3D质感</button>
+              </div>
+            </div>
+
+            <div class="field-row">
+              <span class="field-label">比例</span>
+              <div class="segmented" role="group" aria-label="图片比例">
+                <button class="active" type="button" data-ratio="1:1">1:1</button>
+                <button type="button" data-ratio="4:3">4:3</button>
+                <button type="button" data-ratio="16:9">16:9</button>
+              </div>
+            </div>
+
+            <label class="upload-box" for="reference">
+              <input id="reference" type="file" accept="image/*">
+              <span class="upload-icon">+</span>
+              <span>上传参考图</span>
+              <small>支持 JPG / PNG，本地预览</small>
+            </label>
+
+            <button id="generate" class="primary-button wide" type="button">生成图片</button>
+          </aside>
+
+          <section class="canvas-panel" aria-label="生成结果">
+            <div class="result-toolbar">
+              <div>
+                <strong>生成预览</strong>
+                <span id="status">等待创作</span>
+              </div>
+              <button id="download" class="download-button" type="button" aria-label="下载图片" title="下载图片">下载图片</button>
+            </div>
+            <canvas id="artboard" width="900" height="900"></canvas>
+          </section>
+        </div>
+      </section>
+
+      <section id="workflow" class="section-wrap">
+        <div class="section-heading">
+          <h2>三步完成出图</h2>
+          <p>保留最短路径，让运营、设计和商家都能快速上手。</p>
+        </div>
+        <div class="workflow-grid">
+          <article>
+            <span>01</span>
+            <h3>输入需求</h3>
+            <p>填写画面描述，上传产品图或参考图，选择图片比例和风格。</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>AI生成</h3>
+            <p>系统根据提示词生成多版图片，可继续调整风格、光线、构图。</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>下载使用</h3>
+            <p>下载 PNG/JPEG 图片，用于电商主图、详情页、社媒封面和广告素材。</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="cases" class="section-wrap is-hidden">
+        <div class="section-heading">
+          <h2>案例展示</h2>
+          <p>这些案例用于展示网站信息结构，后续可替换为你的真实作品。</p>
+        </div>
+        <div class="case-grid">
+          <article class="case-item">
+            <img src="https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=900&q=80" alt="珠宝精修案例">
+            <div>
+              <strong>珠宝耳饰精修</strong>
+              <span>金属高光更干净，珍珠层次更自然。</span>
+            </div>
+          </article>
+          <article class="case-item">
+            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80" alt="产品广告案例">
+            <div>
+              <strong>手表广告主图</strong>
+              <span>从普通产品图生成电商活动视觉。</span>
+            </div>
+          </article>
+          <article class="case-item">
+            <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=900&q=80" alt="服装模特案例">
+            <div>
+              <strong>服装模特展示</strong>
+              <span>自动生成穿搭姿势和棚拍背景。</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="pricing" class="section-wrap">
+        <div class="section-heading">
+          <h2>能量充值套餐</h2>
+          <p>虚拟产品为即时交付的数字服务，购买前请确认生成需求和使用范围。</p>
+        </div>
+        <div class="price-grid">
+          <article class="price-card">
+            <span>体验版</span>
+            <h3>￥9.9</h3>
+            <p>120 能量点，适合试用和少量素材生成。</p>
+            <ul>
+              <li>约 12 张标准图</li>
+              <li>有效期 3 个月</li>
+              <li>支持 PNG 下载</li>
+            </ul>
+            <button type="button">点击订阅</button>
+          </article>
+          <article class="price-card">
+            <span>入门版</span>
+            <h3>￥29.9</h3>
+            <p>380 能量点，适合单个产品套图和日常补图。</p>
+            <ul>
+              <li>约 38 张标准图</li>
+              <li>有效期 6 个月</li>
+              <li>适合亚马逊主图测试</li>
+            </ul>
+            <button type="button">点击订阅</button>
+          </article>
+          <article class="price-card featured">
+            <span>基础版</span>
+            <h3>￥68</h3>
+            <p>880 能量点，适合日常作图和店铺上新。</p>
+            <ul>
+              <li>约 88 张标准图</li>
+              <li>有效期 12 个月</li>
+              <li>支持批量生成</li>
+            </ul>
+            <button type="button">点击订阅</button>
+          </article>
+          <article class="price-card">
+            <span>团队版</span>
+            <h3>￥199</h3>
+            <p>2990 能量点，适合团队协作和批量营销图。</p>
+            <ul>
+              <li>约 299 张标准图</li>
+              <li>有效期 12 个月</li>
+              <li>优先处理队列</li>
+            </ul>
+            <button type="button">点击订阅</button>
+          </article>
+        </div>
+      </section>
+
+      <section id="faq" class="section-wrap">
+        <div class="section-heading">
+          <h2>常见问题</h2>
+          <p>把用户最关心的问题提前讲清楚，能明显提升转化和信任感。</p>
+        </div>
+        <div class="faq-list">
+          <details open>
+            <summary>生成的图片可以商用吗？</summary>
+            <p>可以用于你的店铺主图、详情页、广告海报、社媒内容等业务场景。上线后建议在页面补充商用授权说明：用户需确保上传的产品图、品牌素材、人物素材拥有合法使用权，平台不支持侵权、仿牌、违规用途。</p>
+          </details>
+          <details>
+            <summary>一张图消耗多少能量点？</summary>
+            <p>建议先按标准图 10 能量点/张计算。后续可按类型区分：白底主图、卖点图、场景图约 10 点/张；精修、换场景、模特图、高清放大可设置更高消耗；批量生成可做套餐优惠。</p>
+          </details>
+          <details>
+            <summary>上传的图片会被保存吗？</summary>
+            <p>当前演示网页只做本地预览，不会真正上传到服务器。后续接入 AI 后端后，建议只保存生成记录和必要图片，并在用户后台提供删除入口；同时写清楚图片保存周期、隐私政策和客户素材保护规则。</p>
+          </details>
+          <details>
+            <summary>可以接入真正的 AI 生图吗？</summary>
+            <p>可以。下一步可以接入图片生成 API，让用户上传产品图、填写卖点、选择图片类型后自动生成亚马逊主图和 A+ 图。推荐先做“生成单张图”，稳定后再做 9 张套图、用户系统、能量点扣费、生成历史和作品下载。</p>
+          </details>
+        </div>
+      </section>
+
+      <section id="contact" class="contact-band">
+        <div>
+          <h2>如有需求或建议，请留言</h2>
+          <p>适合后续接入客服二维码、企业微信、表单通知和客户案例收集。</p>
+          <p class="contact-note">如有需要作图，请联系 reaillt。</p>
+          <div class="qr-card">
+            <img class="qr-image" src="assets/wechat-qr.jpg" alt="乔亭设计工作室微信二维码">
+            <span>扫码添加微信，发送产品图和作图需求</span>
+          </div>
+        </div>
+        <form class="message-form">
+          <input type="text" placeholder="您的称呼" aria-label="您的称呼">
+          <input type="tel" placeholder="联系方式" aria-label="联系方式">
+          <textarea rows="3" placeholder="您的留言" aria-label="您的留言"></textarea>
+          <button class="primary-button" type="button">提交</button>
+        </form>
+      </section>
+
+    </main>
+
+    <div class="modal-backdrop" id="toolModal" hidden>
+      <div class="tool-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <button class="modal-close" type="button" aria-label="关闭">×</button>
+        <div>
+          <p class="eyebrow">TOOL DETAIL</p>
+          <h2 id="modalTitle">工具详情</h2>
+          <p id="modalDesc"></p>
+        </div>
+        <div class="detail-grid">
+          <div>
+            <strong>适用场景</strong>
+            <p id="modalScene"></p>
+          </div>
+          <div>
+            <strong>上传要求</strong>
+            <p id="modalUpload"></p>
+          </div>
+          <div>
+            <strong>消耗能量</strong>
+            <p id="modalCost"></p>
+          </div>
+        </div>
+        <a class="primary-button modal-action" href="#studio">立即使用</a>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <span>乔亭AI作图工具</span>
+      <span>如有需要作图，请联系 reaillt</span>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
