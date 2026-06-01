@@ -13,6 +13,7 @@ const modalAction = document.querySelector(".modal-action");
 const amazonProduct = document.querySelector("#amazonProduct");
 const amazonPoints = document.querySelector("#amazonPoints");
 const amazonStatus = document.querySelector("#amazonStatus");
+const amazonReference = document.querySelector("#amazonReference");
 const generateAmazonSet = document.querySelector("#generateAmazonSet");
 const suiteCards = [...document.querySelectorAll("[data-suite-card]")];
 const imageGenerateButtons = [...document.querySelectorAll("[data-generate-image]")];
@@ -27,6 +28,7 @@ let ratio = "1:1";
 let amazonRatio = "1:1";
 let selectedStyle = "商业摄影";
 let referenceImage = null;
+let amazonReferenceImage = null;
 
 const palettes = {
   "商业摄影": ["#eef5ff", "#5d7fc9", "#fff2e8", "#17315f"],
@@ -304,6 +306,18 @@ referenceInput.addEventListener("change", () => {
   reader.readAsDataURL(file);
 });
 
+amazonReference?.addEventListener("change", () => {
+  const file = amazonReference.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    amazonReferenceImage = reader.result;
+    amazonStatus.textContent = "已上传产品图，将优先生成精修白底图";
+  };
+  reader.readAsDataURL(file);
+});
+
 generateButton.addEventListener("click", () => {
   statusText.textContent = "生成中...";
   generateButton.disabled = true;
@@ -393,7 +407,8 @@ function generateSingleAmazonImage(imageType, triggerButton) {
         points,
         sellingPoints: points,
         ratio: amazonRatio,
-        imageType
+        imageType,
+        referenceImage: amazonReferenceImage
       })
     })
       .then(async (response) => {
