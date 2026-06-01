@@ -325,43 +325,76 @@ function handleAmazonMainGenerate() {
   generateSingleAmazonImage("白底主图", generateAmazonSet);
 }
 
+const amazonOutputSizes = {
+  "1:1": [1600, 1600],
+  "4:3": [1600, 1200],
+  "16:9": [1600, 900]
+};
+
+function resizeImageToOutputSize(imageUrl, selectedRatio) {
+  const [targetWidth, targetHeight] = amazonOutputSizes[selectedRatio] || amazonOutputSizes["1:1"];
+
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => {
+      const outputCanvas = document.createElement("canvas");
+      const outputContext = outputCanvas.getContext("2d");
+      outputCanvas.width = targetWidth;
+      outputCanvas.height = targetHeight;
+      outputContext.imageSmoothingEnabled = true;
+      outputContext.imageSmoothingQuality = "high";
+      outputContext.drawImage(image, 0, 0, targetWidth, targetHeight);
+      resolve(outputCanvas.toDataURL("image/png"));
+    };
+    image.onerror = () => reject(new Error("Failed to resize generated image."));
+    image.src = imageUrl;
+  });
+}
+
 function generateSingleAmazonImage(imageType, triggerButton) {
   const product = amazonProduct.value.trim() || "示例产品";
   const points = amazonPoints.value.trim() || "高品质、耐用、适合日常使用";
   amazonStatus.textContent = `正在请求 AI 后端，生成「${imageType}」...`;
   triggerButton.disabled = true;
 
-  fetch("/api/generate-main", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      product,
-      points,
-      ratio: amazonRatio,
-      imageType
+    fetch("/api/generate-main", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        product,
+        points,
+        sellingPoints: points,
+        ratio: amazonRatio,
+        imageType
+      })
     })
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("AI 后端暂未可用");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      const targetCard = document.querySelector(`[data-image-type="${imageType}"]`);
-      const targetImage = targetCard.querySelector(".suite-product-image");
-      if (data.image && targetImage) {
-        targetImage.src = data.image;
-      }
-      targetCard.classList.add("generated");
-      amazonStatus.textContent = `已生成「${product}」的「${imageType}」`;
-    })
-    .catch(() => {
-      amazonStatus.textContent = `还没有接入 /api/generate-main，当前先标记「${imageType}」演示方案`;
-      showAmazonDemoCard(imageType, product, points);
-    })
+      .then(async (response) => {
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(data.error || `AI 后端暂时不可用（${response.status}）`);
+        }
+        return data;
+      })
+      .then(async (data) => {
+        const targetCard = document.querySelector(`[data-image-type="${imageType}"]`);
+        const targetImage = targetCard?.querySelector(".suite-product-image");
+        let imageUrl = data.imageUrl || data.image;
+        if (!imageUrl) {
+          throw new Error(data.error || "AI 没有返回图片，请稍后重试");
+        }
+        imageUrl = await resizeImageToOutputSize(imageUrl, amazonRatio);
+        if (targetImage) {
+          targetImage.src = imageUrl;
+        }
+        targetCard?.classList.add("generated");
+        amazonStatus.textContent = `已生成「${product}」的「${imageType}」`;
+      })
+      .catch((error) => {
+        amazonStatus.textContent = `生成失败：${error.message}`;
+        console.error(error);
+      })
     .finally(() => {
       triggerButton.disabled = false;
     });
