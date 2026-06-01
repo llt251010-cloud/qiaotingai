@@ -351,6 +351,32 @@ function resizeImageToOutputSize(imageUrl, selectedRatio) {
   });
 }
 
+function buildImageFileName(product, imageType, selectedRatio) {
+  const [targetWidth, targetHeight] = amazonOutputSizes[selectedRatio] || amazonOutputSizes["1:1"];
+  const cleanName = `${product}-${imageType}`.replace(/[\\/:*?"<>|\s]+/g, "-").replace(/^-+|-+$/g, "");
+  return `${cleanName || "amazon-image"}-${targetWidth}x${targetHeight}.png`;
+}
+
+function showDownloadButton(targetCard, imageUrl, fileName) {
+  if (!targetCard) return;
+
+  let downloadButton = targetCard.querySelector(".mini-download");
+  if (!downloadButton) {
+    downloadButton = document.createElement("button");
+    downloadButton.className = "mini-download";
+    downloadButton.type = "button";
+    downloadButton.textContent = "下载图片";
+    targetCard.appendChild(downloadButton);
+  }
+
+  downloadButton.onclick = () => {
+    const link = document.createElement("a");
+    link.download = fileName;
+    link.href = imageUrl;
+    link.click();
+  };
+}
+
 function generateSingleAmazonImage(imageType, triggerButton) {
   const product = amazonProduct.value.trim() || "示例产品";
   const points = amazonPoints.value.trim() || "高品质、耐用、适合日常使用";
@@ -388,6 +414,7 @@ function generateSingleAmazonImage(imageType, triggerButton) {
         if (targetImage) {
           targetImage.src = imageUrl;
         }
+        showDownloadButton(targetCard, imageUrl, buildImageFileName(product, imageType, amazonRatio));
         targetCard?.classList.add("generated");
         amazonStatus.textContent = `已生成「${product}」的「${imageType}」`;
       })

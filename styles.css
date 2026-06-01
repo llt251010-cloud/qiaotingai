@@ -625,7 +625,22 @@ canvas {
   font-weight: 800;
 }
 
-.mini-generate:hover {
+.mini-download {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 38px;
+  margin-top: 10px;
+  color: var(--blue);
+  border: 1px solid rgba(36, 72, 143, 0.2);
+  border-radius: 8px;
+  background: rgba(238, 245, 255, 0.9);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.mini-generate:hover,
+.mini-download:hover {
   transform: translateY(-1px);
 }
 
