@@ -674,9 +674,19 @@ canvas {
   font-weight: 800;
 }
 
+.mini-download:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .mini-generate:hover,
 .mini-download:hover {
   transform: translateY(-1px);
+}
+
+.mini-download:disabled:hover {
+  transform: none;
 }
 
 .suite-card.generated {

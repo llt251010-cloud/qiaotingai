@@ -456,12 +456,29 @@ function showDownloadButton(targetCard, imageUrl, fileName) {
     targetCard.appendChild(downloadButton);
   }
 
+  downloadButton.disabled = false;
+  downloadButton.title = "下载当前图片";
   downloadButton.onclick = () => {
     const link = document.createElement("a");
     link.download = fileName;
     link.href = imageUrl;
     link.click();
   };
+}
+
+function setupPersistentDownloadButtons() {
+  imageGenerateButtons.forEach((button) => {
+    const targetCard = button.closest(".suite-card");
+    if (!targetCard || targetCard.querySelector(".mini-download")) return;
+
+    const downloadButton = document.createElement("button");
+    downloadButton.className = "mini-download";
+    downloadButton.type = "button";
+    downloadButton.textContent = "下载图片";
+    downloadButton.disabled = true;
+    downloadButton.title = "生成后可下载";
+    button.insertAdjacentElement("afterend", downloadButton);
+  });
 }
 
 function generateSingleAmazonImage(imageType, triggerButton) {
@@ -533,6 +550,8 @@ imageGenerateButtons.forEach((button) => {
     generateSingleAmazonImage(button.dataset.generateImage, button);
   });
 });
+
+setupPersistentDownloadButtons();
 
 generateAplusSet.addEventListener("click", () => {
   const product = aplusProduct.value.trim() || "示例产品";
