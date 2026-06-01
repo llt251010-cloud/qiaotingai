@@ -339,6 +339,58 @@ amazonReference?.addEventListener("change", () => {
   amazonReference.closest(".upload-box")?.classList.add("has-preview");
 });
 
+function compressReferenceImage(file, maxSize = 1600, quality = 0.9) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const image = new Image();
+      image.onload = () => {
+        const scale = Math.min(1, maxSize / Math.max(image.width, image.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1, Math.round(image.width * scale));
+        canvas.height = Math.max(1, Math.round(image.height * scale));
+        const context = canvas.getContext("2d");
+        context.imageSmoothingEnabled = true;
+        context.imageSmoothingQuality = "high";
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      image.onerror = reject;
+      image.src = reader.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+amazonReference?.addEventListener("change", async () => {
+  const file = amazonReference.files[0];
+  if (!file) return;
+
+  generateAmazonSet.disabled = true;
+  amazonStatus.textContent = "正在优化上传图，稍后即可生成";
+  try {
+    amazonReferenceImage = await compressReferenceImage(file);
+    if (amazonReferencePreview) {
+      amazonReferencePreview.src = amazonReferenceImage;
+      amazonReferencePreview.hidden = false;
+    }
+    if (amazonReferenceTitle) {
+      amazonReferenceTitle.hidden = false;
+    }
+    if (amazonReferenceHint) {
+      amazonReferenceHint.textContent = `${file.name}，已压缩加速，点击可更换`;
+      amazonReferenceHint.hidden = false;
+    }
+    amazonReference.closest(".upload-box")?.classList.add("has-preview");
+    amazonStatus.textContent = "已上传产品图，将优先生成精修白底图";
+  } catch (error) {
+    amazonStatus.textContent = "上传图优化失败，将使用原图生成";
+  } finally {
+    generateAmazonSet.disabled = false;
+  }
+});
+
 generateButton.addEventListener("click", () => {
   statusText.textContent = "生成中...";
   generateButton.disabled = true;
