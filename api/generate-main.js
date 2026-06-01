@@ -9,6 +9,7 @@ export default async function handler(req, res) {
     points = "",
     ratio = "1:1",
     imageType = "white background main image",
+    referenceImage = "",
   } = req.body || {};
 
   const cleanProduct = String(product).trim();
@@ -29,15 +30,26 @@ export default async function handler(req, res) {
     "16:9": "1696*960",
   };
 
-  const prompt = [
-    "生成一张专业亚马逊电商产品图。",
-    `图片类型：${imageType}`,
-    `产品名称：${cleanProduct}`,
-    `核心卖点：${cleanPoints || "高品质、结构清晰、突出购买理由"}`,
-    `画幅比例：${ratio}`,
-    "风格：真实商业摄影，干净布光，产品细节清晰，高级但真实。",
-    "要求：不要品牌 logo，不要水印，不要乱码文字，不要夸张变形，不要侵权标识。",
-  ].join("\n");
+  const hasReferenceImage = typeof referenceImage === "string" && referenceImage.startsWith("data:image/");
+  const prompt = hasReferenceImage
+    ? [
+        "请基于我上传的产品图进行电商白底图精修。",
+        `产品名称：${cleanProduct}`,
+        `图片类型：${imageType}`,
+        `核心卖点：${cleanPoints || "高品质、结构清晰、突出购买理由"}`,
+        "保留原产品的外观、结构、颜色、比例和关键细节，不要更换成其他产品。",
+        "优化内容：纯白背景、居中构图、商业摄影质感、清晰边缘、自然阴影、提高亮度和质感、去除杂乱背景和瑕疵。",
+        "要求：不要品牌 logo，不要水印，不要乱码文字，不要夸张变形，不要侵权标识。",
+      ].join("\n")
+    : [
+        "生成一张专业亚马逊电商产品图。",
+        `图片类型：${imageType}`,
+        `产品名称：${cleanProduct}`,
+        `核心卖点：${cleanPoints || "高品质、结构清晰、突出购买理由"}`,
+        `画幅比例：${ratio}`,
+        "风格：真实商业摄影，干净布光，产品细节清晰，高级但真实。",
+        "要求：不要品牌 logo，不要水印，不要乱码文字，不要夸张变形，不要侵权标识。",
+      ].join("\n");
 
   try {
     const aiRes = await fetch("https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation", {
@@ -47,12 +59,16 @@ export default async function handler(req, res) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: process.env.DASHSCOPE_IMAGE_MODEL || "wan2.6-t2i",
+        model: hasReferenceImage
+          ? (process.env.DASHSCOPE_IMAGE_EDIT_MODEL || "qwen-image-edit-plus")
+          : (process.env.DASHSCOPE_IMAGE_MODEL || "wan2.6-t2i"),
         input: {
           messages: [
             {
               role: "user",
-              content: [{ text: prompt }],
+              content: hasReferenceImage
+                ? [{ image: referenceImage }, { text: prompt }]
+                : [{ text: prompt }],
             },
           ],
         },

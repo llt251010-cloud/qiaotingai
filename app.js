@@ -14,6 +14,9 @@ const amazonProduct = document.querySelector("#amazonProduct");
 const amazonPoints = document.querySelector("#amazonPoints");
 const amazonStatus = document.querySelector("#amazonStatus");
 const amazonReference = document.querySelector("#amazonReference");
+const amazonReferencePreview = document.querySelector("#amazonReferencePreview");
+const amazonReferenceTitle = document.querySelector("#amazonReferenceTitle");
+const amazonReferenceHint = document.querySelector("#amazonReferenceHint");
 const generateAmazonSet = document.querySelector("#generateAmazonSet");
 const suiteCards = [...document.querySelectorAll("[data-suite-card]")];
 const imageGenerateButtons = [...document.querySelectorAll("[data-generate-image]")];
@@ -316,6 +319,24 @@ amazonReference?.addEventListener("change", () => {
     amazonStatus.textContent = "已上传产品图，将优先生成精修白底图";
   };
   reader.readAsDataURL(file);
+});
+
+amazonReference?.addEventListener("change", () => {
+  const file = amazonReference.files[0];
+  if (!file || !amazonReferenceImage) return;
+
+  if (amazonReferencePreview) {
+    amazonReferencePreview.src = amazonReferenceImage;
+    amazonReferencePreview.hidden = false;
+  }
+  if (amazonReferenceTitle) {
+    amazonReferenceTitle.hidden = false;
+  }
+  if (amazonReferenceHint) {
+    amazonReferenceHint.textContent = `${file.name}，点击可更换`;
+    amazonReferenceHint.hidden = false;
+  }
+  amazonReference.closest(".upload-box")?.classList.add("has-preview");
 });
 
 generateButton.addEventListener("click", () => {
