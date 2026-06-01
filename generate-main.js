@@ -59,7 +59,9 @@ export default async function handler(req, res) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: process.env.DASHSCOPE_IMAGE_MODEL || "wan2.7-image-pro",
+        model: hasReferenceImage
+          ? (process.env.DASHSCOPE_IMAGE_EDIT_MODEL || "qwen-image-edit-plus")
+          : (process.env.DASHSCOPE_IMAGE_MODEL || "wan2.6-t2i"),
         input: {
           messages: [
             {

@@ -394,7 +394,9 @@ function showDownloadButton(targetCard, imageUrl, fileName) {
 function generateSingleAmazonImage(imageType, triggerButton) {
   const product = amazonProduct.value.trim() || "示例产品";
   const points = amazonPoints.value.trim() || "高品质、耐用、适合日常使用";
-  amazonStatus.textContent = `正在请求 AI 后端，生成「${imageType}」...`;
+  amazonStatus.textContent = amazonReferenceImage
+    ? `正在精修上传图，生成「${imageType}」...`
+    : `正在请求 AI 后端，生成「${imageType}」...`;
   triggerButton.disabled = true;
 
     fetch("/api/generate-main", {
