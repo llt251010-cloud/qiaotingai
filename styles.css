@@ -493,6 +493,10 @@ canvas {
   margin-left: auto;
 }
 
+.tool-subheading {
+  margin-top: 42px;
+}
+
 .tool-grid,
 .price-grid,
 .workflow-grid,
