@@ -339,7 +339,7 @@ amazonReference?.addEventListener("change", () => {
   amazonReference.closest(".upload-box")?.classList.add("has-preview");
 });
 
-function compressReferenceImage(file, maxSize = 1600, quality = 0.9) {
+function compressReferenceImage(file, maxSize = 1600, quality = 0.95) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
