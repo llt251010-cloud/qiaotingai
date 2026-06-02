@@ -15,6 +15,8 @@ export default async function handler(req, res) {
   const cleanProduct = String(product).trim();
   const cleanPoints = String(sellingPoints || points).trim();
   const hasReferenceImage = typeof referenceImage === "string" && referenceImage.startsWith("data:image/");
+  const isSizeParametersImage = String(imageType).includes("尺寸参数图");
+  const isMetalRetouchImage = String(imageType).includes("金属精修") || String(imageType).toLowerCase().includes("metal");
 
   if (!cleanProduct) {
     return res.status(400).json({ error: "请先填写产品名称。" });
@@ -31,7 +33,37 @@ export default async function handler(req, res) {
     "16:9": "1536x864",
   };
 
-  const prompt = hasReferenceImage
+  const sizeParametersPrompt = [
+    "亚马逊尺寸参数展示图，纯白背景，产品居中放大展示，使用专业工程尺寸线标注产品长度、宽度、高度、深度。",
+    "右侧展示容量、重量、材质、包装数量等关键参数。",
+    "整体采用欧美高端品牌风格，留白充足，数据清晰易读，高级灰白配色，科技感排版。",
+    "产品真实比例展示，高清精修质感，符合亚马逊详情页设计规范。",
+    "如果用户没有提供真实尺寸、容量、重量、材质、包装数量，请使用清晰的占位参数排版，不要生成乱码文字。",
+    `图片类型：${imageType}`,
+    `产品名称：${cleanProduct}`,
+    `核心卖点/参数：${cleanPoints || "请围绕产品尺寸、容量、重量、材质和包装数量进行信息图设计"}`,
+    `画幅比例：${ratio}`,
+  ].join("\n");
+
+  const metalRetouchPrompt = [
+    "帮我精修五金产品，摄影级别，C4D 渲染级高清质感，纯白背景，RGB:255。",
+    "保留产品表面原有凹凸文字，严格保留原有设计，不改变产品外观形态。",
+    "清除产品表面所有指纹、灰尘、划痕、飞边毛刺，修复缺陷。",
+    "对表面做轻微抛光处理，精准展现纯金属的材质特性与表面工艺，如拉丝、磨砂、镜面、哑光。",
+    "弱化黑色暗部，降低高反差对比度，柔和的画面质感，8K 超清。",
+    "保留原图尺寸、构图比例和产品主体位置，不拉伸、不变形、不新增结构。",
+    "只允许清洁、修复、抛光、提高清晰度和优化金属质感，不允许改色、改款、改造型。",
+    `图片类型：${imageType}`,
+    `产品名称：${cleanProduct}`,
+    `补充要求：${cleanPoints || "五金产品金属材质精修，保持真实产品外观"}`,
+    `画幅比例：${ratio}`,
+  ].join("\n");
+
+  const prompt = isSizeParametersImage
+    ? sizeParametersPrompt
+    : isMetalRetouchImage
+    ? metalRetouchPrompt
+    : hasReferenceImage
     ? [
         "产品精修，亚马逊主图风格，纯白背景，产品居中放大展示，主体占画面85%以上，专业摄影棚拍摄，高端商业摄影，超高清8K画质，真实材质还原，颜色精准还原，细节清晰锐利，边缘干净利落，去除灰尘瑕疵，去除划痕褶皱，增强产品立体感，优化高光与阴影，整体高级有质感，无水印，无文字，无图标，符合亚马逊主图规范，电商商业级精修效果。",
         "高级商业摄影质感，3D 软件渲染级精细度。",
