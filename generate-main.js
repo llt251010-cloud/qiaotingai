@@ -32,7 +32,13 @@ export default async function handler(req, res) {
   };
 
   const prompt = hasReferenceImage
-    ? "仅对上传图片做保守修图。严格保持原产品主体、形状、颜色、材质、角度、比例和边缘轮廓不变。只清理背景为纯白色，增强清晰度，轻微提亮，增加自然阴影。禁止添加任何文字、标签、logo、水印、图标、卖点文案、场景道具或新物体。输出只有原产品和纯白背景的电商主图。"
+    ? [
+        "产品精修，亚马逊主图风格，纯白背景，产品居中放大展示，主体占画面85%以上，专业摄影棚拍摄，高端商业摄影，超高清8K画质，真实材质还原，颜色精准还原，细节清晰锐利，边缘干净利落，去除灰尘瑕疵，去除划痕褶皱，增强产品立体感，优化高光与阴影，底部自然投影，整体高级有质感，无水印，无文字，无图标，符合亚马逊主图规范，电商商业级精修效果。",
+        "严格保持原产品主体、形状、颜色、材质、角度、比例和边缘轮廓不变。",
+        "只允许清理背景、增强清晰度、提亮、增加自然阴影、优化质感。",
+        "绝对禁止添加任何文字、中文、英文、数字、标题、标签、logo、水印、图标、卖点文案、场景道具、包装、说明书或新物体。",
+        "输出画面只能包含上传图中的原产品主体和纯白背景。",
+      ].join("\n")
     : [
         "生成一张专业亚马逊电商产品白底主图。",
         `图片类型：${imageType}`,
@@ -44,7 +50,7 @@ export default async function handler(req, res) {
       ].join("\n");
 
   const requestBody = {
-    model: process.env.ARK_IMAGE_MODEL || "doubao-seedream-5-0-260128",
+    model: process.env.ARK_IMAGE_MODEL || "doubao-seedream-5-0-lite-260128",
     prompt,
     size: sizeMap[ratio] || "1024x1024",
     response_format: "b64_json",
