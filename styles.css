@@ -728,6 +728,11 @@ canvas {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.retouch-grid {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 14px;
+}
+
 .tool-card {
   overflow: hidden;
   padding: 0;
@@ -744,6 +749,19 @@ canvas {
   width: 100%;
   aspect-ratio: 1.38;
   object-fit: cover;
+}
+
+.retouch-grid .tool-card img {
+  aspect-ratio: 1.16;
+}
+
+.retouch-grid .tool-card h3 {
+  font-size: 20px;
+}
+
+.retouch-grid .tool-card p {
+  font-size: 15px;
+  line-height: 1.55;
 }
 
 .compare-preview {
@@ -1197,6 +1215,10 @@ canvas {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .retouch-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .detail-grid {
     grid-template-columns: 1fr;
   }
@@ -1221,6 +1243,10 @@ canvas {
   .case-grid,
   .suite-grid,
   .amazon-ai-case-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .retouch-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
