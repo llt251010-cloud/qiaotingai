@@ -316,7 +316,7 @@ amazonReference?.addEventListener("change", () => {
   const reader = new FileReader();
   reader.onload = () => {
     amazonReferenceImage = reader.result;
-    amazonStatus.textContent = "已上传产品图，将优先生成精修白底图";
+    amazonStatus.textContent = "产品图已上传";
   };
   reader.readAsDataURL(file);
 });
@@ -383,7 +383,7 @@ amazonReference?.addEventListener("change", async () => {
       amazonReferenceHint.hidden = false;
     }
     amazonReference.closest(".upload-box")?.classList.add("has-preview");
-    amazonStatus.textContent = "已上传产品图，将优先生成精修白底图";
+    amazonStatus.textContent = "产品图已上传";
   } catch (error) {
     amazonStatus.textContent = "上传图优化失败，将使用原图生成";
   } finally {
