@@ -565,7 +565,17 @@
             <p id="modalCost"></p>
           </div>
         </div>
-        <a class="primary-button modal-action" href="#studio">立即使用</a>
+        <div class="modal-generator">
+          <label class="modal-upload" for="toolReference">
+            <input id="toolReference" type="file" accept="image/*">
+            <span>上传产品图</span>
+            <small id="toolReferenceName">选择一张图片，按当前精修类型生成</small>
+          </label>
+          <button class="primary-button modal-action" type="button">开始精修</button>
+          <p id="toolGenerateStatus" class="suite-status">等待上传产品图</p>
+          <img id="toolGeneratedImage" class="modal-result-image" alt="精修结果" hidden>
+          <a id="toolDownload" class="secondary-button modal-download" download="retouched-product.png" hidden>下载图片</a>
+        </div>
       </div>
     </div>
 

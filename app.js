@@ -10,6 +10,11 @@ const ratioButtons = [...document.querySelectorAll("[data-ratio]")];
 const modal = document.querySelector("#toolModal");
 const modalClose = document.querySelector(".modal-close");
 const modalAction = document.querySelector(".modal-action");
+const toolReference = document.querySelector("#toolReference");
+const toolReferenceName = document.querySelector("#toolReferenceName");
+const toolGenerateStatus = document.querySelector("#toolGenerateStatus");
+const toolGeneratedImage = document.querySelector("#toolGeneratedImage");
+const toolDownload = document.querySelector("#toolDownload");
 const amazonProduct = document.querySelector("#amazonProduct");
 const amazonPoints = document.querySelector("#amazonPoints");
 const amazonStatus = document.querySelector("#amazonStatus");
@@ -32,6 +37,8 @@ let amazonRatio = "1:1";
 let selectedStyle = "商业摄影";
 let referenceImage = null;
 let amazonReferenceImage = null;
+let activeToolKey = "";
+let toolReferenceImage = "";
 
 const palettes = {
   "商业摄影": ["#eef5ff", "#5d7fc9", "#fff2e8", "#17315f"],
@@ -317,11 +324,15 @@ function drawGeneratedArt() {
 function openModal(toolKey) {
   const detail = toolDetails[toolKey];
   if (!detail) return;
+  activeToolKey = toolKey;
   document.querySelector("#modalTitle").textContent = detail.title;
   document.querySelector("#modalDesc").textContent = detail.desc;
   document.querySelector("#modalScene").textContent = detail.scene;
   document.querySelector("#modalUpload").textContent = detail.upload;
   document.querySelector("#modalCost").textContent = detail.cost;
+  toolGenerateStatus.textContent = "等待上传产品图";
+  toolGeneratedImage.hidden = true;
+  toolDownload.hidden = true;
   modal.hidden = false;
   document.body.classList.add("modal-open");
 }
@@ -362,7 +373,60 @@ document.querySelectorAll("[data-tool]").forEach((card) => {
 });
 
 modalClose.addEventListener("click", closeModal);
-modalAction.addEventListener("click", closeModal);
+toolReference.addEventListener("change", () => {
+  const file = toolReference.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    toolReferenceImage = String(reader.result || "");
+    toolReferenceName.textContent = file.name;
+    toolGenerateStatus.textContent = "产品图已上传，可以开始精修";
+  };
+  reader.readAsDataURL(file);
+});
+
+modalAction.addEventListener("click", async () => {
+  const detail = toolDetails[activeToolKey];
+  if (!detail) return;
+  if (!toolReferenceImage) {
+    toolGenerateStatus.textContent = "请先上传产品图";
+    return;
+  }
+
+  modalAction.disabled = true;
+  toolGenerateStatus.textContent = `正在生成「${detail.title}」...`;
+  toolGeneratedImage.hidden = true;
+  toolDownload.hidden = true;
+
+  try {
+    const response = await fetch("/api/generate-main", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        product: detail.title,
+        sellingPoints: detail.desc,
+        ratio,
+        imageType: detail.title,
+        referenceImage: toolReferenceImage,
+      }),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.imageUrl) {
+      throw new Error(data.error || "精修失败，请稍后重试");
+    }
+
+    toolGeneratedImage.src = data.imageUrl;
+    toolGeneratedImage.hidden = false;
+    toolDownload.href = data.imageUrl;
+    toolDownload.download = `${detail.title}.png`;
+    toolDownload.hidden = false;
+    toolGenerateStatus.textContent = `已生成「${detail.title}」`;
+  } catch (error) {
+    toolGenerateStatus.textContent = error?.message || "精修失败，请稍后重试";
+  } finally {
+    modalAction.disabled = false;
+  }
+});
 modal.addEventListener("click", (event) => {
   if (event.target === modal) closeModal();
 });
