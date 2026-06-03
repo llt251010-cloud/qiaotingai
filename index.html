@@ -57,7 +57,10 @@
               <input id="amazonReference" type="file" accept="image/*">
               <span class="upload-icon">+</span>
               <span>上传产品图</span>
-              <small>用于后续真实 AI 接口参考</small>
+              <small>点击上传或更换</small>
+              <img id="amazonReferencePreview" class="upload-preview" alt="上传产品图" hidden>
+              <strong id="amazonReferenceTitle" class="upload-preview-title" hidden>上传产品图</strong>
+              <small id="amazonReferenceHint" class="upload-preview-hint" hidden></small>
             </label>
 
             <button id="generateAmazonSet" class="primary-button wide" type="button" onclick="handleAmazonMainGenerate()">生成白底主图</button>
@@ -78,8 +81,8 @@
           <div class="suite-grid" aria-label="亚马逊9张图预览">
             <article class="suite-card" data-suite-card data-image-type="白底主图">
               <span>01</span>
-              <h3>白底主图</h3>
-              <p>纯白背景，主体居中，突出产品完整外观。</p>
+              <h3>白底主图精修</h3>
+              <p>亚马逊主图风格，纯白背景，产品居中放大展示，主体占画面85%以上。</p>
               <img class="suite-product-image" src="assets/amazon-main-product.png" alt="亚马逊白底主图产品示例">
               <button class="mini-generate" type="button" data-generate-image="白底主图">生成这张图</button>
             </article>
@@ -210,6 +213,86 @@
 
       <section id="tools" class="section-wrap">
         <div class="section-heading hero-style-heading">
+          <p class="eyebrow">RETOUCH SUITE</p>
+          <h2>精修合集</h2>
+          <p>按产品材质和品类整理常用精修方向，适合电商主图、详情页、广告图和品牌视觉统一处理。</p>
+        </div>
+        <div class="tool-grid retouch-grid">
+          <button class="tool-card" type="button" data-tool="metal">
+            <img src="assets/metal-retouch-before-after.png" alt="金属精修前后对比">
+            <h3>金属精修</h3>
+            <p>强化金属边缘、高光层次和拉丝质感，减少脏污与杂色。</p>
+            <span>查看详情</span>
+          </button>
+          <button class="tool-card" type="button" data-tool="glass">
+            <img src="assets/product-scene-swap-before-after.png" alt="产品换场景前后对比">
+            <h3>玻璃精修</h3>
+            <p>优化透明度、折射、反光和边缘轮廓，画面干净通透。</p>
+            <span>查看详情</span>
+          </button>
+          <button class="tool-card" type="button" data-tool="plastic">
+            <img src="assets/amazon-main-product.png" alt="塑料产品精修示例">
+            <h3>塑料精修</h3>
+            <p>修复划痕、压痕、毛边和色差，让塑料表面更均匀。</p>
+            <span>查看详情</span>
+          </button>
+          <button class="tool-card" type="button" data-tool="jewelry">
+            <img src="assets/jewelry-retouch-before-after.png" alt="珠宝精修前后对比">
+            <h3>珠宝精修</h3>
+            <p>提升金属高光与宝石通透感，适合首饰和高客单价商品。</p>
+            <span>查看详情</span>
+          </button>
+          <button class="tool-card" type="button" data-tool="apparel">
+            <img src="assets/fashion-model-showcase.png" alt="服装精修展示">
+            <h3>服装精修</h3>
+            <p>整理褶皱、版型、纹理和色差，保留真实面料质感。</p>
+            <span>查看详情</span>
+          </button>
+          <button class="tool-card" type="button" data-tool="leather">
+            <img src="assets/amazon-detail-closeup.png" alt="皮革精修示例">
+            <h3>皮革精修</h3>
+            <p>增强纹理、缝线、油蜡感和轮廓层次，适合包鞋配饰。</p>
+            <span>查看详情</span>
+          </button>
+          <button class="tool-card" type="button" data-tool="wood">
+            <img src="assets/amazon-detail-closeup.png" alt="木质产品精修示例">
+            <h3>木质精修</h3>
+            <p>还原木纹、清理灰尘瑕疵，突出自然材质和高级感。</p>
+            <span>查看详情</span>
+          </button>
+          <button class="tool-card" type="button" data-tool="food">
+            <img src="assets/amazon-use-scene.png" alt="食品精修示例">
+            <h3>食品精修</h3>
+            <p>提升新鲜度、色泽、油润感和细节，让食物更有购买欲。</p>
+            <span>查看详情</span>
+          </button>
+          <button class="tool-card" type="button" data-tool="cosmetics">
+            <img src="assets/poster-background-christmas.png" alt="美妆精修示例">
+            <h3>美妆精修</h3>
+            <p>优化瓶身反光、膏体质感、包装边缘和品牌级视觉质感。</p>
+            <span>查看详情</span>
+          </button>
+          <button class="tool-card" type="button" data-tool="electronics">
+            <img src="assets/amazon-selling-points.png" alt="电子产品精修示例">
+            <h3>电子产品精修</h3>
+            <p>强化屏幕、按键、接口、金属边框和科技感光影。</p>
+            <span>查看详情</span>
+          </button>
+          <button class="tool-card" type="button" data-tool="home">
+            <img src="assets/amazon-scene-product.png" alt="家具家居精修示例">
+            <h3>家具家居精修</h3>
+            <p>修正结构比例、材质纹理、布料细节和空间展示质感。</p>
+            <span>查看详情</span>
+          </button>
+          <button class="tool-card" type="button" data-tool="mainRetouch">
+            <img src="assets/batch-cutout-products.png" alt="白底主图精修示例">
+            <h3>白底主图精修</h3>
+            <p>纯白背景、主体居中放大、边缘干净，适合亚马逊主图。</p>
+            <span>查看详情</span>
+          </button>
+        </div>
+
+        <div class="section-heading hero-style-heading tool-subheading">
           <p class="eyebrow">TOOLS PLAZA</p>
           <h2>工具广场</h2>
           <p>覆盖商品图、人物图、修复和素材生产的常用场景。点击卡片可查看工具详情。</p>
@@ -482,7 +565,17 @@
             <p id="modalCost"></p>
           </div>
         </div>
-        <a class="primary-button modal-action" href="#studio">立即使用</a>
+        <div class="modal-generator">
+          <label class="modal-upload" for="toolReference">
+            <input id="toolReference" type="file" accept="image/*">
+            <span>上传产品图</span>
+            <small id="toolReferenceName">选择一张图片，按当前精修类型生成</small>
+          </label>
+          <button class="primary-button modal-action" type="button">开始精修</button>
+          <p id="toolGenerateStatus" class="suite-status">等待上传产品图</p>
+          <a id="toolDownload" class="secondary-button modal-download" download="retouched-product.png" hidden>下载图片</a>
+          <img id="toolGeneratedImage" class="modal-result-image" alt="精修结果" hidden>
+        </div>
       </div>
     </div>
 
