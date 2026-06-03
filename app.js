@@ -380,7 +380,7 @@ toolReference.addEventListener("change", async () => {
   modalAction.disabled = true;
   toolGenerateStatus.textContent = "正在优化上传图，请稍后";
   try {
-    toolReferenceImage = await compressReferenceImage(file);
+    toolReferenceImage = await compressReferenceImage(file, 1024, 0.82);
     toolReferenceName.textContent = file.name;
     toolGenerateStatus.textContent = "产品图已上传，可以开始精修";
   } catch (error) {
@@ -416,9 +416,10 @@ modalAction.addEventListener("click", async () => {
         referenceImage: toolReferenceImage,
       }),
     });
-    const data = await response.json().catch(() => ({}));
+    const data = await response.json().catch(() => ({ error: `接口错误 ${response.status}` }));
     if (!response.ok || !data.imageUrl) {
-      throw new Error(data.error || "精修失败，请稍后重试");
+      const detail = data.error || data.message || data.code || `接口错误 ${response.status}`;
+      throw new Error(detail);
     }
 
     toolGeneratedImage.src = data.imageUrl;
@@ -428,7 +429,8 @@ modalAction.addEventListener("click", async () => {
     toolDownload.hidden = false;
     toolGenerateStatus.textContent = `已生成「${detail.title}」`;
   } catch (error) {
-    toolGenerateStatus.textContent = error?.message || "精修失败，请稍后重试";
+    console.error("Tool retouch failed:", error);
+    toolGenerateStatus.textContent = `精修失败：${error?.message || "请稍后重试"}`;
   } finally {
     modalAction.disabled = false;
   }
