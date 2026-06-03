@@ -373,16 +373,22 @@ document.querySelectorAll("[data-tool]").forEach((card) => {
 });
 
 modalClose.addEventListener("click", closeModal);
-toolReference.addEventListener("change", () => {
+toolReference.addEventListener("change", async () => {
   const file = toolReference.files?.[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    toolReferenceImage = String(reader.result || "");
+
+  modalAction.disabled = true;
+  toolGenerateStatus.textContent = "正在优化上传图，请稍后";
+  try {
+    toolReferenceImage = await compressReferenceImage(file);
     toolReferenceName.textContent = file.name;
     toolGenerateStatus.textContent = "产品图已上传，可以开始精修";
-  };
-  reader.readAsDataURL(file);
+  } catch (error) {
+    toolReferenceImage = "";
+    toolGenerateStatus.textContent = "图片读取失败，请换一张图重试";
+  } finally {
+    modalAction.disabled = false;
+  }
 });
 
 modalAction.addEventListener("click", async () => {
