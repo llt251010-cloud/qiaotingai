@@ -328,6 +328,7 @@ select,
   min-height: 190px;
   padding: 12px;
   background: white;
+  gap: 8px;
 }
 
 .upload-box.has-preview .upload-icon,
@@ -339,7 +340,7 @@ select,
 .upload-preview {
   display: block;
   width: 100%;
-  max-height: 124px;
+  height: 124px;
   object-fit: contain;
   border-radius: 8px;
   background: #fff;
@@ -348,13 +349,20 @@ select,
 .upload-preview-title {
   display: block;
   margin-top: 10px;
+  overflow: hidden;
+  width: 100%;
   color: var(--blue);
   font-size: 16px;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .upload-preview-hint {
   overflow: hidden;
   max-width: 100%;
+  margin-top: 0;
+  text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
 }

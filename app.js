@@ -450,36 +450,6 @@ referenceInput.addEventListener("change", () => {
   reader.readAsDataURL(file);
 });
 
-amazonReference?.addEventListener("change", () => {
-  const file = amazonReference.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = () => {
-    amazonReferenceImage = reader.result;
-    amazonStatus.textContent = "产品图已上传";
-  };
-  reader.readAsDataURL(file);
-});
-
-amazonReference?.addEventListener("change", () => {
-  const file = amazonReference.files[0];
-  if (!file || !amazonReferenceImage) return;
-
-  if (amazonReferencePreview) {
-    amazonReferencePreview.src = amazonReferenceImage;
-    amazonReferencePreview.hidden = false;
-  }
-  if (amazonReferenceTitle) {
-    amazonReferenceTitle.hidden = false;
-  }
-  if (amazonReferenceHint) {
-    amazonReferenceHint.textContent = `${file.name}，点击可更换`;
-    amazonReferenceHint.hidden = false;
-  }
-  amazonReference.closest(".upload-box")?.classList.add("has-preview");
-});
-
 function compressReferenceImage(file, maxSize = 1600, quality = 0.95) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -517,10 +487,11 @@ amazonReference?.addEventListener("change", async () => {
       amazonReferencePreview.hidden = false;
     }
     if (amazonReferenceTitle) {
+      amazonReferenceTitle.textContent = file.name;
       amazonReferenceTitle.hidden = false;
     }
     if (amazonReferenceHint) {
-      amazonReferenceHint.textContent = `${file.name}，已压缩加速，点击可更换`;
+      amazonReferenceHint.textContent = "点击更换";
       amazonReferenceHint.hidden = false;
     }
     amazonReference.closest(".upload-box")?.classList.add("has-preview");
