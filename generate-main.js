@@ -18,6 +18,7 @@ export default async function handler(req, res) {
   const isSizeParametersImage = String(imageType).includes("尺寸参数图");
   const isMetalRetouchImage = String(imageType).includes("金属精修") || String(imageType).toLowerCase().includes("metal");
   const isGlassRetouchImage = String(imageType).includes("玻璃精修") || String(imageType).toLowerCase().includes("glass");
+  const isApparelRetouchImage = String(imageType).includes("服装精修") || String(imageType).toLowerCase().includes("apparel");
 
   if (!cleanProduct) {
     return res.status(400).json({ error: "请先填写产品名称。" });
@@ -79,12 +80,30 @@ export default async function handler(req, res) {
     `画幅比例：${ratio}`,
   ].join("\n");
 
+  const apparelRetouchPrompt = [
+    "产品精修，商业平铺摄影风格，纯白背景，正视平视图，3D 高清渲染，精准还原色彩与面料材质。",
+    "丰富的面料纹理细节，去除多余的褶皱，袖子自然挺直。",
+    "让衣服轮廓更挺括平整，版型看起来舒适。",
+    "修复线头、褶皱、起球、污渍，去除生硬阴影与反光。",
+    "呈现柔软顺滑面料质感，垂坠自然、纹理清晰。",
+    "优化光影立体感，强化布料层次，符合电商主图标准。",
+    "严格保留原服装款式、颜色、图案、版型结构、领口、袖口、纽扣、拉链和材质特征，不改变产品设计。",
+    "绝对禁止新增任何文字、中文、英文、标题、说明文案、标签、数字、图标、logo、水印、前后对比排版、模特或场景道具。",
+    "最终画面只能包含原服装产品和纯白背景。",
+    `图片类型：${imageType}`,
+    `产品名称：${cleanProduct}`,
+    `补充要求：${cleanPoints || "服装产品精修，保持真实款式和面料质感"}`,
+    `画幅比例：${ratio}`,
+  ].join("\n");
+
   const prompt = isSizeParametersImage
     ? sizeParametersPrompt
     : isMetalRetouchImage
     ? metalRetouchPrompt
     : isGlassRetouchImage
     ? glassRetouchPrompt
+    : isApparelRetouchImage
+    ? apparelRetouchPrompt
     : hasReferenceImage
     ? [
         "产品精修，亚马逊主图风格，纯白背景，产品居中放大展示，主体占画面85%以上，专业摄影棚拍摄，高端商业摄影，超高清8K画质，真实材质还原，颜色精准还原，细节清晰锐利，边缘干净利落，去除灰尘瑕疵，去除划痕褶皱，增强产品立体感，优化高光与阴影，整体高级有质感，无水印，无文字，无图标，符合亚马逊主图规范，电商商业级精修效果。",
