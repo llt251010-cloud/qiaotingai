@@ -17,6 +17,7 @@ export default async function handler(req, res) {
   const hasReferenceImage = typeof referenceImage === "string" && referenceImage.startsWith("data:image/");
   const isSizeParametersImage = String(imageType).includes("尺寸参数图");
   const isMetalRetouchImage = String(imageType).includes("金属精修") || String(imageType).toLowerCase().includes("metal");
+  const isGlassRetouchImage = String(imageType).includes("玻璃精修") || String(imageType).toLowerCase().includes("glass");
 
   if (!cleanProduct) {
     return res.status(400).json({ error: "请先填写产品名称。" });
@@ -62,10 +63,28 @@ export default async function handler(req, res) {
     `画幅比例：${ratio}`,
   ].join("\n");
 
+  const glassRetouchPrompt = [
+    "上传一张图就可以精修，产品置于纯净的纯白背景上。",
+    "正视图，平视视角，3D 渲染级高清质感。",
+    "精准还原产品真实通透质感，去除多余杂散光与杂乱折射，增强精致感与高级感。",
+    "展现玻璃材质通透质感，晶莹剔透、温润光泽、干净澄澈。",
+    "清除玻璃表面气泡、污渍、划痕、指纹与瑕疵，让产品通透无瑕、崭新洁净。",
+    "光线均匀通透，光影过渡自然柔和，无明显杂乱阴影与杂光。",
+    "严格保留原产品外观、结构、比例、颜色、透明度和材质细节，不改变产品设计。",
+    "绝对禁止新增任何文字、中文、英文、标题、说明文案、标签、数字、图标、logo、水印、前后对比排版或装饰元素。",
+    "最终画面只能包含原产品本体和纯白背景，不要做海报、不要做对比图、不要加场景道具。",
+    `图片类型：${imageType}`,
+    `产品名称：${cleanProduct}`,
+    `补充要求：${cleanPoints || "玻璃材质精修，保持真实产品外观和通透质感"}`,
+    `画幅比例：${ratio}`,
+  ].join("\n");
+
   const prompt = isSizeParametersImage
     ? sizeParametersPrompt
     : isMetalRetouchImage
     ? metalRetouchPrompt
+    : isGlassRetouchImage
+    ? glassRetouchPrompt
     : hasReferenceImage
     ? [
         "产品精修，亚马逊主图风格，纯白背景，产品居中放大展示，主体占画面85%以上，专业摄影棚拍摄，高端商业摄影，超高清8K画质，真实材质还原，颜色精准还原，细节清晰锐利，边缘干净利落，去除灰尘瑕疵，去除划痕褶皱，增强产品立体感，优化高光与阴影，整体高级有质感，无水印，无文字，无图标，符合亚马逊主图规范，电商商业级精修效果。",
